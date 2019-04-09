@@ -14,7 +14,7 @@ def CreateAlbum(album):
     nome_album = album.get('album')
     nome_album = trataString(nome_album) if album else 'sem informação'
     nome_album = trataString(album['album'])
-    carac = album['info_album'].get(['Característica'])
+    carac = album['info_album'].get('Característica')
     carac = trataString(carac) if carac else 'sem informação'
     formato = album['info_album'].get('Formatos')
     formato = trataString(formato) if formato else 'sem informação'
