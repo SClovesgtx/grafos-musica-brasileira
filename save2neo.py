@@ -11,12 +11,21 @@ def trataString(string):
     return nova_string
 
 def CreateAlbum(album):
+    nome_album = album.get('album')
+    nome_album = trataString(nome_album) if album else 'sem informação'
     nome_album = trataString(album['album'])
+    carac = album['info_album'].get(['Característica'])
+    carac = trataString(carac) if carac else 'sem informação'
+    formato = album['info_album'].get('Formatos')
+    formato = trataString(formato) if formato else 'sem informação'
+    ano = album['info_album'].get('Primeiro disco')
+    ano = ano if ano else 'sem informação'
+
     query_album = "MERGE (:Álbum{nome_album:'%s', caracteristica:'%s',\
           formatos: '%s', primeiro_disco:'%s'})"%(nome_album,
-                                                  album['info_album']['Característica'],
-                                                  album['info_album']['Formatos'],
-                                                  album['info_album']['Primeiro disco'])
+                                                  carac,
+                                                  formato,
+                                                  ano)
 
     graph.run(query_album)
 
@@ -104,7 +113,7 @@ def deleteAllData():
     graph.run(query)
 
 def main():
-    deleteAllData()
+    # deleteAllData()
     with open('data.json', 'r', encoding='utf8') as f:
         data = json.load(f)
 
