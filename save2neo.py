@@ -106,7 +106,7 @@ def CreateFaixas(faixas, album):
             nome_album = trataString(album['album'])
             CreateMusica(musica)
             CreateRelacaoMusicaAlbum(musica, nome_album, item)
-            compositores = album.get('compositores')
+            compositores = faixa_album.get('compositores')
             if compositores:
                 CreateRelacaoCompositoresMusica(compositores, musica)
             musicos = faixa_album.get('musicos')
