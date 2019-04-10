@@ -91,6 +91,7 @@ def CreateMusicos(musicos_da_faixa, musica, nome_album, item):
         nome_musico, instrumento = [string.strip() for string in
                                     musico_participante.split(':')]
         nome_musico = trataString(nome_musico)
+        instrumento = trataString(instrumento)
         graph.run('MERGE (:Músico{nome_musico:"%s"})'%(nome_musico))
         CreateRelacaoMusicoMusica(nome_musico, musica, nome_album, instrumento)
         CreateRelacaoMusicoAlbum(nome_musico, nome_album, item)
