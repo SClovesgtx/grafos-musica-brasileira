@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 url_base = "http://www.discosdobrasil.com.br/discosdobrasil/consulta/consulta.php?IndiceFixo=&Conteudo=Disco&Procura=&FormularioAnterior=&Apartirde=0&NumeroItens=7325&Formulario=Exibir"
 
 def save_json(lista):
-    with open('data.json', 'w', encoding='utf8') as file:
+    with open('data2.json', 'w', encoding='utf8') as file:
         json.dump(lista, file, ensure_ascii=False)
 
 def get_links_discos(url_base):
@@ -78,6 +78,8 @@ def rangeFaixas(soup):
 def get_infoFaixa(range_faixa):
     musicos = []
     compositores = []
+    arranjadores = []
+    participacoesEspeciais = []
     musicas = []
     for table in range_faixa:
         a_ = table.find_all('a')
@@ -91,12 +93,21 @@ def get_infoFaixa(range_faixa):
             if a != None and 'Id_Compositor' in a['href']:
                 compositor = a.text.strip()
                 compositores.append(compositor)
+            if a != None and 'Id_Arranjador' in a['href']:
+                arranjador = a.text.strip()
+                arranjadores.append(arranjador)
+            if a != None and 'Id_ParticipacaoEspecial' in a['href']:
+                participanteEspecial = a.text.strip()
+                participacoesEspeciais.append(participanteEspecial)
         if p != None and 'faixa' in p.text:
             faixa = p.text.strip()
 
     dic = {'musica': musicas,
           'compositores': compositores,
-          'musicos': musicos}
+          'musicos': musicos,
+          'arranjadores': arranjadores,
+          'participacaoEspecial': participacoesEspeciais}
+
     return faixa, dic
 
 def connect(link):
@@ -125,7 +136,7 @@ def main(urls):
         if soup == False:
             with open('urls.txt', 'w') as file:
                 for url in urls_deque:
-                    file.write(url) # salvando os links que faltam
+                    file.write(url+'\n') # salvando os links que faltam
 
             print("\n\nURLs e Dados Salvos!\\n")
 
@@ -160,5 +171,5 @@ if __name__ == '__main__':
         urls = get_links_discos(url_base)
         with open('urls.txt', 'w') as file:
             for url in urls:
-                file.write(url)
+                file.write(url+'\n')
         main(urls)
