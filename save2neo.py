@@ -14,7 +14,6 @@ def trataString(string):
 def CreateAlbum(album):
     nome = album.get('album')
     nome = trataString(nome) if album else 'sem informação'
-    nome = trataString(album['album'])
     carac = album['info_album'].get('Característica')
     carac = trataString(carac) if carac else 'sem informação'
     formato = album['info_album'].get('Formatos')
@@ -44,9 +43,9 @@ def CreateRelacaoAlbumGravadora(album):
 def CreatePessoa(nome_pessoa):
     graph.run('MERGE (:Pessoa{nome:"%s"})'%(nome_pessoa))
 
-def createRelacaoProdutorAlbum(produtor, nome):
+def createRelacaoProdutorAlbum(nome_produtor, nome_album):
     graph.run('MATCH (p:Pessoa{nome:"%s"}), (a:Álbum{nome:"%s"}) \
-           CREATE UNIQUE (p)-[:FOI_PRODUTOR]->(a)'%(produtor, nome))
+           CREATE UNIQUE (p)-[:FOI_PRODUTOR]->(a)'%(nome_produtor, nome_album))
 
 def CreateProdutores(album):
     produtores = album['info_album'].get('Produtor')
@@ -75,28 +74,58 @@ def CreateRelacaoCompositoresMusica(compositores, musica):
 
 def CreateRelacaoMusicoMusica(nome_pessoa, musica, nome_album, instrumento):
     query = "MATCH (musico:Pessoa{nome:'%s'}), (musica:Música{nome:'%s'}) \
-            CREATE UNIQUE (musico)-[:TOCOU{album:'%s', instrumento:'%s'}]->(musica)"%(nome_pessoa,
+            CREATE UNIQUE (musico)-[:TOCOU{album:'%s', instrumento:'%s', participante_especial:'não'}]->(musica)"%(nome_pessoa,
                                                                                       musica,
                                                                                       nome_album,
                                                                                       instrumento)
     graph.run(query)
 
-def CreateRelacaoMusicoAlbum(nome_musico, nome_album, item):
+def CreateRelacaoMusicoAlbum(nome_musico, nome_album):
     query = "MATCH (musico:Pessoa{nome:'%s'}), (album:Álbum{nome:'%s'}) \
-            CREATE UNIQUE (musico)-[:PARTICIPOU{faixa:'%s'}]->(album)"%(nome_musico,
-                                                                        nome_album,
-                                                                        item)
+            CREATE UNIQUE (musico)-[:PARTICIPOU{como:'músico'}]->(album)"%(nome_musico,
+                                                                        nome_album)
 
     graph.run(query)
 
 def CreateMusicos(musicos_da_faixa, musica, nome_album, item):
     for musico_participante in musicos_da_faixa:
-        nome_musico, instrumento = [trataString(string) for string in
+        nome_musico, *instrumento = [trataString(string) for string in
                                     musico_participante.split(':')]
 
+        instrumento = instrumento[0] if instrumento else 'não informado'
         CreatePessoa(nome_musico)
         CreateRelacaoMusicoMusica(nome_musico, musica, nome_album, instrumento)
-        CreateRelacaoMusicoAlbum(nome_musico, nome_album, item)
+        CreateRelacaoMusicoAlbum(nome_musico, nome_album)
+
+def CreateRelacaoArranjadoresAlbum(nome_musica, arranjadores, nome_album, item):
+    for arranjador in arranjadores:
+        nome_arranjador = trataString(arranjador)
+        query = "MATCH (arranjador:Pessoa{nome:'%s'}), (album:Álbum{nome:'%s'}) \
+            CREATE UNIQUE (arranjador)-[:PARTICIPOU{como:'arranjador', música:'%s', faixa:'%s'}]->(album)"%(nome_arranjador, nome_album, nome_musica, item)
+
+    graph.run(query)
+
+def CreateRelacaoArranjadoresMusica(nome_musica, arranjadores, nome_album, item):
+    for arranjador in arranjadores:
+        nome_arranjador = trataString(arranjador)
+        CreatePessoa(arranjador)
+        query = "MATCH (arranjador:Pessoa{nome:'%s'}), (musica:Música{nome:'%s'}) \
+                CREATE UNIQUE (arranjador)-[:FEZ_ARRANJO{album:'%s', faixa:'%s'}]->(musica)"%(nome_arranjador,
+                                                                                 nome_musica,
+                                                                                 nome_album,
+                                                                                 item)
+        graph.run(query)
+
+def CreateRelacaoParticipanteMusica(participantes_especiais, musica, nome_album):
+    for participante in participantes_especiais:
+        nome_musico = trataString(participante)
+        CreatePessoa(nome_musico)
+        CreateRelacaoMusicoAlbum(nome_musico, nome_album)
+        query = "MATCH (musico:Pessoa{nome:'%s'}), (musica:Música{nome:'%s'}) \
+                CREATE UNIQUE (musico)-[:TOCOU{album:'%s', participante_especial:'sim'}]->(musica)"%(nome_musico,
+                                                                                          musica,
+                                                                                          nome_album)
+        graph.run(query)
 
 def CreateFaixas(faixas, album):
     for item in faixas:
@@ -112,6 +141,33 @@ def CreateFaixas(faixas, album):
             musicos = faixa_album.get('musicos')
             if musicos:
                 CreateMusicos(musicos, musica, nome_album, item)
+            arranjadores = faixa_album.get('arranjadores')
+            if arranjadores:
+                CreateRelacaoArranjadoresMusica(musica,
+                                                arranjadores,
+                                                nome_album, item)
+                CreateRelacaoArranjadoresAlbum(musica,
+                                             arranjadores,
+                                             nome_album, item)
+            participantes_especiais = faixa_album.get('participacaoEspecial')
+            if participantes_especiais:
+                CreateRelacaoParticipanteMusica(participantes_especiais,
+                                                musica,
+                                                nome_album)
+
+def createInterpretes(interpretes, nome_album):
+    for interprete in interpretes:
+        if 'Diversos Intérpretes' in interprete:
+            break
+        interprete = trataString(interprete)
+        CreatePessoa(interprete)
+        query = "MATCH (musico:Pessoa{nome:'%s'}), (album:Álbum{nome:'%s'}) \
+                CREATE UNIQUE (musico)-[:PARTICIPOU{como:'interprete'}]->(album)"%(interprete,
+                                                                            nome_album)
+
+        graph.run(query)
+
+
 
 def deleteAllData():
     query = "MATCH (node) OPTIONAL MATCH (node)-[rel]-() DELETE node, rel"
@@ -119,7 +175,7 @@ def deleteAllData():
 
 def main():
     # deleteAllData()
-    with open('data.json', 'r', encoding='utf8') as f:
+    with open('data2.json', 'r', encoding='utf8') as f:
         data = json.load(f)
 
     for album in data:
