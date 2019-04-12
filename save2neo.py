@@ -178,7 +178,7 @@ def deleteAllData():
 
 def main():
     # deleteAllData()
-    with open('data2.json', 'r', encoding='utf8') as f:
+    with open('data.json', 'r', encoding='utf8') as f:
         data = json.load(f)
 
     for album in data:
