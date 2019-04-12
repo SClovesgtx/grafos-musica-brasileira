@@ -108,7 +108,7 @@ def CreateRelacaoArranjadoresAlbum(nome_musica, arranjadores, nome_album, item):
 def CreateRelacaoArranjadoresMusica(nome_musica, arranjadores, nome_album, item):
     for arranjador in arranjadores:
         nome_arranjador = trataString(arranjador)
-        CreatePessoa(arranjador)
+        CreatePessoa(nome_arranjador)
         query = "MATCH (arranjador:Pessoa{nome:'%s'}), (musica:Música{nome:'%s'}) \
                 CREATE UNIQUE (arranjador)-[:FEZ_ARRANJO{album:'%s', faixa:'%s'}]->(musica)"%(nome_arranjador,
                                                                                  nome_musica,
