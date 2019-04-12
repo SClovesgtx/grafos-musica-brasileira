@@ -133,6 +133,8 @@ def CreateFaixas(faixas, album):
         for musica in faixa_album['musica']:
             musica = trataString(musica)
             nome_album = trataString(album['album'])
+            if musica != 'Pot-pourri': # por enquanto estamos ignorando
+                break
             CreateMusica(musica)
             CreateRelacaoMusicaAlbum(musica, nome_album, item)
             compositores = faixa_album.get('compositores')
