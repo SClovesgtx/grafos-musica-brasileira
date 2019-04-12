@@ -135,25 +135,26 @@ def CreateFaixas(faixas, album):
             nome_album = trataString(album['album'])
             if musica != 'Pot-pourri': # por enquanto estamos ignorando
                 break
-            CreateMusica(musica)
-            CreateRelacaoMusicaAlbum(musica, nome_album, item)
-            compositores = faixa_album.get('compositores')
-            if compositores:
-                CreateRelacaoCompositoresMusica(compositores, musica)
-            musicos = faixa_album.get('musicos')
-            if musicos:
-                CreateMusicos(musicos, musica, nome_album, item)
-            arranjadores = faixa_album.get('arranjadores')
-            if arranjadores:
-                CreateRelacaoArranjadoresMusica(musica,
+            else:
+                CreateMusica(musica)
+                CreateRelacaoMusicaAlbum(musica, nome_album, item)
+                compositores = faixa_album.get('compositores')
+                if compositores:
+                    CreateRelacaoCompositoresMusica(compositores, musica)
+                musicos = faixa_album.get('musicos')
+                if musicos:
+                    CreateMusicos(musicos, musica, nome_album, item)
+                arranjadores = faixa_album.get('arranjadores')
+                if arranjadores:
+                    CreateRelacaoArranjadoresMusica(musica,
                                                 arranjadores,
                                                 nome_album, item)
-                CreateRelacaoArranjadoresAlbum(musica,
+                    CreateRelacaoArranjadoresAlbum(musica,
                                              arranjadores,
                                              nome_album, item)
-            participantes_especiais = faixa_album.get('participacaoEspecial')
-            if participantes_especiais:
-                CreateRelacaoParticipanteMusica(participantes_especiais,
+                participantes_especiais = faixa_album.get('participacaoEspecial')
+                if participantes_especiais:
+                    CreateRelacaoParticipanteMusica(participantes_especiais,
                                                 musica,
                                                 nome_album)
 
