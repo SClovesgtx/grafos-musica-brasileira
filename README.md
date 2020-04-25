@@ -1,13 +1,23 @@
-![alt text](https://br.royalvegascasino.com/blog/wp-content/uploads/br_royalvegas_com/2018/10/destak_carictura.png)
+![alt text](https://br.royalvegascasino.com/blogrvc/images/uploads/br_royalvegas_com/2018/10/destak_carictura.png)
 
-# MPB e Grafos
+# MPB and Graphs
 
-Este projeto visa tornar possível o estudo das estruturas em rede, existentes em nossa música popular, pelo uso de grafos. Além de ser um fonte unificada para consumo de dados em torno da discografia nacional.
+This project aims to make possible the study of network structures, existing in Brazilian popular music, through the use of graphs and the neo4j database.
 
-Os dados que eu tenho até agora eu capturei do site [Discos do Brasil](http://www.discosdobrasil.com.br/discosdobrasil/indice.htm), são mais de 7 mil discos, 1.866 intérpretes principais, 44.652 músicas, 16.049 músicos, 2.537 arranjadores e 10.233 compositores registrados.
+The data I have so far captured come from the website [Discos do Brasil](http://www.discosdobrasil.com.br/discosdobrasil/indice.htm). This website was created from personal collection of Maria Luiza Kfouri, a brazilian journalist and musicologist. There are more than 7 thousand records, 1,866 main performers, 44,652 songs, 16,049 musicians, 2,537 arrangers and 10,233 registered composers.
 
-A ideia é que isso seja open source e pessoas possam contribuir adicionando álbuns ainda não catalogados. Vou disponibilizar uma API para que pesquisadores(historiadores, musicólogos, etc) possam consumir esses dados programaticamente.
+### How to upload data to Neo4j?
 
-Este banco de dados será aberto para a comunidade colaborar na catalogação de discos que ainda não estão registrados, enriquecendo cada vez mais nossa base de dados.
+Install neo4j on your machine following [this](https://neo4j.com/docs/operations-manual/current/installation/) tutorial.
 
-Em breve, mais informações ...
+Install the required python packages by running the following command:
+
+```
+$ pip3 install -r requirements.txt
+```
+
+And then run the following command to upload the data to your local neo4j database:
+
+```
+$ python3 save2neo.py --password <your neo4j password here>
+```
