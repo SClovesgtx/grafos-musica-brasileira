@@ -6,7 +6,7 @@ This project aims to make possible the study of network structures, existing in 
 
 The data I have so far captured come from the website [Discos do Brasil](http://www.discosdobrasil.com.br/discosdobrasil/indice.htm). This website was created from personal collection of Maria Luiza Kfouri, a brazilian journalist and musicologist. There are more than 7 thousand records, 1,866 main performers, 44,652 songs, 16,049 musicians, 2,537 arrangers and 10,233 registered composers.
 
-### How to upload data to Neo4j?
+### How to upload this data to Neo4j?
 
 Install neo4j on your machine following [this](https://neo4j.com/docs/operations-manual/current/installation/) tutorial.
 
