@@ -1,10 +1,8 @@
 from py2neo import Graph
-
+import argparse
 import os
 import json
 
-NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD')
-graph = Graph("bolt://localhost:7687/db/data/", user="neo4j", password=NEO4J_PASSWORD)
 
 def trataString(string):
     if string:
@@ -191,4 +189,14 @@ def main():
             CreateFaixas(faixas, album)
 
 if __name__=='__main__':
+    parser = argparse.ArgumentParser(
+                description='Louder of json data to neo4j database')
+
+    parser.add_argument('-p', '--password', type=str, required=True,
+                        help='The neo4j password')
+
+    args = parser.parse_args()
+
+    graph = Graph("bolt://localhost:7687/db/data/", user="neo4j", password=args.password)
+
     main()
