@@ -1,4 +1,4 @@
-![alt text](https://br.royalvegascasino.com/blogrvc/images/uploads/br_royalvegas_com/2018/10/destak_carictura.png)
+![mpb draw](./imgs//cap.png)
 
 # MPB and Graphs
 
@@ -21,3 +21,9 @@ And then run the following command to upload the data to your local neo4j databa
 ```
 $ python3 save2neo.py --password <your neo4j password here>
 ```
+
+### The graph model
+
+The model graph to be generated will have the following structure:
+
+![graph model](./imgs/graph_model.png)
